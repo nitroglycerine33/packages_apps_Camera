@@ -261,7 +261,6 @@ public class VideoCamera extends ActivityBase
 
     private int mZoomState = ZOOM_STOPPED;
     private boolean mSmoothZoomSupported = false;
-    private boolean mVolumeZoom = false;    // Volume zoom.
     private int mZoomValue;  // The current zoom value.
     private int mZoomMax;
     private int mTargetZoomValue;
@@ -359,16 +358,13 @@ public class VideoCamera extends ActivityBase
         mPreferences = new ComboPreferences(this);
         CameraSettings.upgradeGlobalPreferences(mPreferences.getGlobal());
         mCameraId = CameraSettings.readPreferredCameraId(mPreferences);
-        powerShutter(mPreferences);
+
         //Testing purpose. Launch a specific camera through the intent extras.
         int intentCameraId = Util.getCameraFacingIntentExtras(this);
         if (intentCameraId != -1) {
             mCameraId = intentCameraId;
         }
 
-        // Initialize volume zoom.
-        mVolumeZoom = VolumeZoomPreference.get(mPreferences, mContentResolver);
-        
         mPreferences.setLocalId(this, mCameraId);
         CameraSettings.upgradeLocalPreferences(mPreferences.getLocal());
 
@@ -524,10 +520,7 @@ public class VideoCamera extends ActivityBase
                     CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL,
                     CameraSettings.KEY_VIDEO_QUALITY};
         final String[] OTHER_SETTING_KEYS = {
-                    CameraSettings.KEY_RECORD_LOCATION,
-                    CameraSettings.KEY_POWER_SHUTTER,
-                    CameraSettings.KEY_VOLUME_ZOOM,
-					 CameraSettings.KEY_FORCE_PREVIEW};
+                    CameraSettings.KEY_RECORD_LOCATION};
 
         CameraPicker.setImageResourceId(R.drawable.ic_switch_video_facing_holo_light);
         mIndicatorControlContainer.initialize(this, mPreferenceGroup,
@@ -803,9 +796,6 @@ public class VideoCamera extends ActivityBase
         } else {  // Driver supports separates outputs for preview and video.
             List<Size> sizes = mParameters.getSupportedPreviewSizes();
             Size preferred = mParameters.getPreferredPreviewSizeForVideo();
-            if (preferred == null) {
-                preferred = sizes.get(0);
-            }
             int product = preferred.width * preferred.height;
             Iterator it = sizes.iterator();
             // Remove the preview sizes that are not preferred.
@@ -1062,24 +1052,6 @@ public class VideoCamera extends ActivityBase
             case KeyEvent.KEYCODE_MENU:
                 if (mMediaRecorderRecording) return true;
                 break;
-            case KeyEvent.KEYCODE_VOLUME_UP:
-                // If the Volume Up key is pressed, zoom in.
-                if (mVolumeZoom && (event.getRepeatCount() == 0)) {
-                        mZoomValue = (((mZoomValue + 10) > mZoomMax) ? mZoomMax : (mZoomValue + 10)); 
-                        onZoomValueChanged(mZoomValue);
-                        mZoomControl.setZoomIndex(mZoomValue);
-                        return true;
-                }
-                return false;
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-                // If the Volume Down key is pressed, zoom out.
-                if (mVolumeZoom && (event.getRepeatCount() == 0)) {
-                        mZoomValue = (((mZoomValue - 10) < 0) ? 0 : (mZoomValue - 10)); 
-                        onZoomValueChanged(mZoomValue);
-                        mZoomControl.setZoomIndex(mZoomValue);
-                        return true;
-                }
-                return false;
         }
 
         return super.onKeyDown(keyCode, event);
@@ -1090,11 +1062,6 @@ public class VideoCamera extends ActivityBase
         switch (keyCode) {
             case KeyEvent.KEYCODE_CAMERA:
                 mShutterButton.setPressed(false);
-                return true;
-            case KeyEvent.KEYCODE_POWER:
-                if (powerShutter(mPreferences)) {
-                    onShutterButtonClick();
-                }
                 return true;
         }
         return super.onKeyUp(keyCode, event);
@@ -1135,11 +1102,7 @@ public class VideoCamera extends ActivityBase
         // display rotation in onCreate may not be what we want.
         if (mPreviewing && (Util.getDisplayRotation(this) == mDisplayRotation)
                 && holder.isCreating()) {
-			if (forcePreview(mPreferences)) {
-				startPreview();
-			} else {
-            	setPreviewDisplay(holder);
-			}
+            setPreviewDisplay(holder);
         } else {
             stopVideoRecording();
             startPreview();
@@ -1914,15 +1877,8 @@ public class VideoCamera extends ActivityBase
         return supported == null ? false : supported.indexOf(value) >= 0;
     }
 
-    private void setCameraHardwareParameters() {
-        mCameraDevice.setParameters(mParameters);
-    }
-
     private void setCameraParameters() {
         mParameters = mCameraDevice.getParameters();
-
-        // Set video mode
-        CameraSettings.setVideoMode(mParameters, true);
 
         mParameters.setPreviewSize(mDesiredPreviewWidth, mDesiredPreviewHeight);
         mParameters.setPreviewFrameRate(mProfile.videoFrameRate);
@@ -2154,9 +2110,6 @@ public class VideoCamera extends ActivityBase
                     mPreferences, getContentResolver());
             mLocationManager.recordLocation(recordLocation);
 
-            if (mParameters.isZoomSupported())
-                mVolumeZoom = VolumeZoomPreference.get(mPreferences, mContentResolver);
-            
             // Check if the current effects selection has changed
             if (updateEffectSelection()) return;
 
@@ -2341,9 +2294,6 @@ public class VideoCamera extends ActivityBase
         mZoomControl.setSmoothZoomSupported(mSmoothZoomSupported);
         mZoomControl.setOnZoomChangeListener(new ZoomChangeListener());
         mCameraDevice.setZoomChangeListener(mZoomListener);
-        
-        // Initialize volume zoom.
-        mVolumeZoom = VolumeZoomPreference.get(mPreferences, mContentResolver);
     }
 
     private final class ZoomListener

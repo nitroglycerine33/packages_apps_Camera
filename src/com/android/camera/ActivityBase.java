@@ -16,19 +16,17 @@
 
 package com.android.camera;
 
+import com.android.camera.ui.PopupManager;
+
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.WindowManager;
-
-import com.android.camera.ui.PopupManager;
 
 /**
  * Superclass of Camera and VideoCamera activities.
@@ -60,30 +58,6 @@ abstract public class ActivityBase extends Activity {
             mOnResumePending = false;
         }
     }
-
-    protected boolean powerShutter(ComboPreferences prefs) {
-        prefs.setLocalId(getApplicationContext(), 0);
-        String val = prefs.getString(CameraSettings.KEY_POWER_SHUTTER,
-                getResources().getString(R.string.pref_camera_power_shutter_default));
-        if (val.equals(CameraSettings.VALUE_ON)){
-            getWindow().addFlags(WindowManager.LayoutParams.PREVENT_POWER_KEY);
-            return true;
-        }else{
-            getWindow().clearFlags(WindowManager.LayoutParams.PREVENT_POWER_KEY);
-            return false;
-        }
-    }
-
-	protected boolean forcePreview(ComboPreferences prefs) {
-		prefs.setLocalId(getApplicationContext(), 0);
-		String val = prefs.getString(CameraSettings.KEY_FORCE_PREVIEW,
-			getResources().getString(R.string.pref_camera_force_preview_default));
-		if (val.equals(CameraSettings.VALUE_ON)){
-			return true;
-		} else {
-			return false;
-		}
-	}
 
     @Override
     protected void onResume() {

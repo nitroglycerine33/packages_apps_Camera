@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class CameraSettings {
     private static final int NOT_FOUND = -1;
-	public static final String KEY_FORCE_PREVIEW = "force_preview_display";
+
     public static final String KEY_VERSION = "pref_version_key";
     public static final String KEY_LOCAL_VERSION = "pref_local_version_key";
     public static final String KEY_RECORD_LOCATION = RecordLocationPreference.KEY;
@@ -52,8 +52,6 @@ public class CameraSettings {
     public static final String KEY_CAMERA_ID = "pref_camera_id_key";
     public static final String KEY_CAMERA_FIRST_USE_HINT_SHOWN = "pref_camera_first_use_hint_shown_key";
     public static final String KEY_VIDEO_FIRST_USE_HINT_SHOWN = "pref_video_first_use_hint_shown_key";
-    public static final String KEY_POWER_SHUTTER = "pref_power_shutter";
-    public static final String KEY_VOLUME_ZOOM = VolumeZoomPreference.KEY;
 
     public static final String EXPOSURE_DEFAULT_VALUE = "0";
 
@@ -63,17 +61,11 @@ public class CameraSettings {
     public static final int DEFAULT_VIDEO_DURATION = 0; // no limit
 
     private static final String TAG = "CameraSettings";
-    public static final String VALUE_ON = "on";
-    public static final String VALUE_OFF = "off";
 
     private final Context mContext;
     private final Parameters mParameters;
     private final CameraInfo[] mCameraInfo;
     private final int mCameraId;
-
-    // Samsung camcorder mode
-    private static boolean mSamsungCamMode;
-    private static boolean mSamsungCamSettings;
 
     public CameraSettings(Activity activity, Parameters parameters,
                           int cameraId, CameraInfo[] cameraInfo) {
@@ -81,9 +73,6 @@ public class CameraSettings {
         mParameters = parameters;
         mCameraId = cameraId;
         mCameraInfo = cameraInfo;
-
-        mSamsungCamMode = mContext.getResources().getBoolean(R.bool.needsSamsungCamMode);
-        mSamsungCamSettings = mContext.getResources().getBoolean(R.bool.hasSamsungCamSettings);
     }
 
     public PreferenceGroup getPreferenceGroup(int preferenceRes) {
@@ -184,8 +173,8 @@ public class CameraSettings {
             if (mParameters.getMaxNumFocusAreas() == 0) {
                 filterUnsupportedOptions(group,
                         focusMode, mParameters.getSupportedFocusModes());
-            } else if(!mSamsungCamSettings) {
-                // Remove the focus mode if we can use tap-to-focus
+            } else {
+                // Remove the focus mode if we can use tap-to-focus.
                 removePreference(group, focusMode.getKey());
             }
         }
@@ -352,13 +341,8 @@ public class CameraSettings {
         if (version == 2) {
             editor.putString(KEY_RECORD_LOCATION,
                     pref.getBoolean(KEY_RECORD_LOCATION, false)
-                    ? CameraSettings.VALUE_ON
+                    ? RecordLocationPreference.VALUE_ON
                     : RecordLocationPreference.VALUE_NONE);
-            
-            editor.putString(KEY_VOLUME_ZOOM,
-                    pref.getBoolean(KEY_VOLUME_ZOOM, false)
-                    ? CameraSettings.VALUE_ON
-                    : VolumeZoomPreference.VALUE_NONE);
             version = 3;
         }
         if (version == 3) {
@@ -489,19 +473,6 @@ public class CameraSettings {
         }
 
         return supported;
-    }
-
-
-    /**
-     * Enable video mode for certain cameras.
-     *
-     * @param params
-     * @param on
-     */
-    public static void setVideoMode(Parameters params, boolean on) {
-        if (mSamsungCamMode) {
-            params.set("cam_mode", on ? "1" : "0");
-        }
     }
 
     private void initVideoEffect(PreferenceGroup group, ListPreference videoEffect) {

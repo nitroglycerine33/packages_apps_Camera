@@ -95,30 +95,14 @@
     <!-- In select camera setting, front-facing camera. [CHAR LIMIT=14] -->
     <string name="pref_camera_id_entry_front">Front</string>
 
-    <!-- More Settings screen, power button title -->
-    <string name="pref_camera_power_shutter_title">Power shutter</string>
-    <string name="pref_camera_power_shutter_default">Off</string>
-
-	<!-- More Settings screen, force preview title -->
-	<string name="pref_camera_force_preview_title">Force preview</string>
-	<string name="pref_camera_force_preview_default">on</string>
-
-    <!-- More Settings screen, record location title text -->
+    <!-- Settings screen, setting title text -->
     <string name="pref_camera_recordlocation_title">Store location</string>
+
     <string name="pref_camera_recordlocation_default" translatable="false">none</string>
 
-    <!-- More Settings screen, record location dialog choices -->
+    <!-- Settings screen, Record location dialog choices -->
     <string name="pref_camera_recordlocation_entry_off">Off</string>
     <string name="pref_camera_recordlocation_entry_on">On</string>
-    
-    <!-- More Settings screen, volume zoom setting title text -->
-    <string name="pref_camera_volumezoom_title">Volume zoom</string>
-    
-    <string name="pref_camera_volumezoom_default" translatable="false">none</string>
-    
-    <!-- More Settings screen, Volume zoom dialog choices -->
-    <string name="pref_camera_volumezoom_entry_off">Off</string>
-    <string name="pref_camera_volumezoom_entry_on">On</string>
 
     <!-- The Video quality settings in preference [CHAR LIMIT=21] -->
     <string name="pref_video_quality_title">Video quality</string>
@@ -185,8 +169,6 @@
     <string name="pref_camera_focusmode_entry_auto">Auto</string>
     <string name="pref_camera_focusmode_entry_infinity">Infinity</string>
     <string name="pref_camera_focusmode_entry_macro">Macro</string>
-    <string name="pref_camera_focusmode_entry_fixed">Fixed</string>
-    <string name="pref_camera_focusmode_entry_facedetect">Face detect</string>
 
     <!-- Default flash mode setting.-->
     <string name="pref_camera_flashmode_default" translatable="false">auto</string>
@@ -217,7 +199,6 @@
     <string name="pref_camera_whitebalance_entry_daylight">Daylight</string>
     <string name="pref_camera_whitebalance_entry_fluorescent">Fluorescent</string>
     <string name="pref_camera_whitebalance_entry_cloudy">Cloudy</string>
-    <string name="pref_camera_whitebalance_entry_cloudydaylight">Cloudy-Daylight</string>
 
     <!-- Default scene mode setting. -->
     <string name="pref_camera_scenemode_default" translatable="false">auto</string>
@@ -235,10 +216,6 @@
     <string name="pref_camera_scenemode_entry_sunset">Sunset</string>
     <!-- Scene mode optimized for taking indoor low-lights pictures. [CHAR LIMIT=16] -->
     <string name="pref_camera_scenemode_entry_party">Party</string>
-    <string name="pref_camera_scenemode_entry_backlight">Backlight</string>
-    <string name="pref_camera_scenemode_entry_duskdawn">Duskdawn</string>
-    <string name="pref_camera_scenemode_entry_fallcolor">Fallcolor</string>
-    <string name="pref_camera_scenemode_entry_text">Text</string>
 
     <!-- Toast after trying to select a setting that is not allowed to change in scene mode [CHAR LIMIT=NONE] -->
     <string name="not_selectable_in_scene_mode">Not selectable in scene mode.</string>
